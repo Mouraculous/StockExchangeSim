@@ -62,7 +62,7 @@ public class MarketOrderRepositoryTest {
     @Test
     public void insertOrdersCompletesSuccessfully() {
         List<Order> orders = orderRepository.getAllOrders();
-        assertThat("market order size should be 2", 2, equalTo(orders.size()));
+        assertThat("market order size should be 5", 5, equalTo(orders.size()));
 
 
 

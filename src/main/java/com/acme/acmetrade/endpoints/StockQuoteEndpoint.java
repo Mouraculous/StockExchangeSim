@@ -38,4 +38,13 @@ public class StockQuoteEndpoint {
         tickerSymbol.setTickerSymbol(ticker);
         return service.getMostRecentQuote(tickerSymbol);
     }
+
+
+    @GetMapping("/chart/{ticker}")
+    public String createChart(@PathVariable String ticker){
+        TickerSymbol tickerSymbol = new TickerSymbol();
+        tickerSymbol.setTickerSymbol(ticker);
+        service.createChart(tickerSymbol);
+        return "Created Chart!";
+    }
 }

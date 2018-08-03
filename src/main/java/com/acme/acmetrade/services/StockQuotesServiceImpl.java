@@ -50,4 +50,8 @@ public class StockQuotesServiceImpl implements StockQuotesService {
     public List<StockQuote> getQuotesBySymbol(TickerSymbol tickerSymbol) {
         return repository.getQuotesBySymbol(tickerSymbol);
     }
+
+    public void createChart(TickerSymbol tickerSymbol){
+        repository.createChart(tickerSymbol);
+    }
 }

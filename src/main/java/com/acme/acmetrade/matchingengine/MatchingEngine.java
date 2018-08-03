@@ -37,7 +37,7 @@ public class MatchingEngine {
 
     private void setUp(){
         orders = new LinkedList<>(orderService.getOrdersInProgress());
-        stockQuotes = new LinkedList<>(quoteService.getAllStockQuotes());
+        stockQuotes = new LinkedList<>(quoteService.getLatestStockQuotes());
         newStockQuotes = new LinkedList<>();
         sqMap = new HashMap<>();
         transactionCount = new HashMap<>();

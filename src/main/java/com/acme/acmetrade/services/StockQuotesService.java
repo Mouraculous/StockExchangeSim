@@ -13,5 +13,6 @@ public interface StockQuotesService {
     List<StockQuote> getLatestStockQuotes();
     StockQuote getMostRecentQuote(TickerSymbol ticker);
     List<StockQuote> getQuotesBySymbol(TickerSymbol tickerSymbol);
+    void createChart(TickerSymbol tickerSymbol);
 
 }

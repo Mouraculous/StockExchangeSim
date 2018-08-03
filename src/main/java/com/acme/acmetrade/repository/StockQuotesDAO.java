@@ -15,4 +15,5 @@ public interface StockQuotesDAO {
     StockQuote getMostRecentQuote(TickerSymbol tickerSymbol);
     List<StockQuote>getStockQuotesSubset(LocalDate from, LocalDate to);
     List<StockQuote> getQuotesBySymbol(TickerSymbol tickerSymbol);
+    void createChart(TickerSymbol tickerSymbol);
 }

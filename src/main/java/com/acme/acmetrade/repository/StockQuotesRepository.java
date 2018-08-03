@@ -4,11 +4,17 @@ import com.acme.acmetrade.domain.StockQuote;
 import com.acme.acmetrade.domain.TickerSymbol;
 import com.acme.acmetrade.services.TickerService;
 import com.acme.acmetrade.services.TickerServiceImpl;
+import org.knowm.xchart.BitmapEncoder;
+import org.knowm.xchart.QuickChart;
+import org.knowm.xchart.XYChart;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.io.IOException;
 import java.time.LocalDate;
+import java.time.ZoneOffset;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
@@ -25,11 +31,11 @@ public class StockQuotesRepository implements StockQuotesDAO {
     private static final String sqlPutQuery = "update STOCK_QUOTES set AMOUNT = ?, LAST_PRICE = ? where ID = ?";
     private static final String sqlGetAllQuery = "select * from STOCK_QUOTES INNER JOIN TICKERS ON TICKERS.TICKER_SYMBOL = STOCK_QUOTES.TICKER";
     private static final String sqlGetMostRecentQuery = "select top 1 * from STOCK_QUOTES INNER JOIN TICKERS ON TICKER_SYMBOL = TICKER WHERE TICKER = '";
-    private static final String sqlOrderByQuery = "' order by TIME_OF_ORDER desc;";
+    private static final String sqlOrderByQuery = "' order by TIME_OF_ORDER asc;";
     private static final String sqlJoinQuery = "select  * from STOCK_QUOTES INNER JOIN TICKERS ON TICKER_SYMBOL = TICKER WHERE TICKER = '";
     private static final String sqlLatestQuotesQuery = "SELECT m1.*, TICKERS.COMPANY_NAME, TICKERS.MARKET_SECTOR FROM STOCK_QUOTES m1 " +
-            "LEFT JOIN STOCK_QUOTES m2 ON (m1.TICKER = m2.TICKER AND m1.TIME_OF_ORDER < m2.TIME_OF_ORDER )" +
-            "LEFT JOIN TICKERS ON m1.TICKER = TICKERS.TICKER_SYMBOL"+
+            "LEFT JOIN STOCK_QUOTES m2 ON (m1.TICKER = m2.TICKER AND m1.TIME_OF_ORDER < m2.TIME_OF_ORDER ) " +
+            "LEFT JOIN TICKERS ON m1.TICKER = TICKERS.TICKER_SYMBOL "+
             "WHERE m2.ID IS NULL;";
 
     @Override
@@ -99,6 +105,25 @@ public class StockQuotesRepository implements StockQuotesDAO {
                     stockQuote.setTickerSymbol(tickerSymbol);
                     return stockQuote;
                 });
+    }
+
+    public void createChart(TickerSymbol tickerSymbol) {
+        List<StockQuote> stockQuotes = getQuotesBySymbol(tickerSymbol);
+        List<Double> xList = new ArrayList<>();
+        List<Double> yList = new ArrayList<>();
+        for ( int i=1; i<stockQuotes.size(); i++){
+
+            xList.add(Double.parseDouble(Long.toString(stockQuotes.get(i).getTimestamp().toEpochSecond(ZoneOffset.UTC))));
+            yList.add(stockQuotes.get(i).getLastTradedPrice());
+        }
+
+        XYChart chart = QuickChart.getChart("Sample Chart", "X", "Y", "y(x)",xList,yList);
+
+        try {
+            BitmapEncoder.saveBitmap(chart, "./Sample_Chart", BitmapEncoder.BitmapFormat.PNG);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 
     @Override
